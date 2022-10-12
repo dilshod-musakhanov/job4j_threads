@@ -5,15 +5,15 @@ public class Wget {
         Thread thread = new Thread(
                 () -> {
                     try {
-                        Thread.sleep(1000);
+                        for (int i = 0; i <= 100; i++) {
+                            Thread.sleep(1000);
+                            System.out.print("\rLoading : " + i + "%");
+                        }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
         );
-        for (int i = 0; i <= 100; i++) {
-            thread.run();
-            System.out.print("\rLoading : " + i + "%");
-        }
+        thread.start();
     }
 }
