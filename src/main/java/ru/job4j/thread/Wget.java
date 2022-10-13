@@ -5,34 +5,41 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
-import static java.lang.System.currentTimeMillis;
-
 public class Wget implements Runnable {
+    private static final int BUFFER_IN_BYTES = 1024;
+    private static final int OFF = 0;
+    private static final int OUT_OF = -1;
+    private static final int MILLISECONDS = 1000;
     private final String url;
     private final int speed;
+    private final String fileName;
 
-    public Wget(String url, int speed) {
+    public Wget(String url, int speed, String fileName) {
         this.url = url;
         this.speed = speed;
+        this.fileName = fileName;
     }
 
     @Override
     public void run() {
-        long start;
-        long finish;
-        int duration;
         try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
-             FileOutputStream fileOutputStream = new FileOutputStream("pom_tmp.xml")) {
-            byte[] dataBuffer = new byte[1024];
+             FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
+            byte[] dataBuffer = new byte[BUFFER_IN_BYTES];
             int bytesRead;
-            start = currentTimeMillis();
-            while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-                fileOutputStream.write(dataBuffer, 0, bytesRead);
-            }
-            finish = currentTimeMillis();
-            duration = (int) (finish - start);
-            if (speed > duration) {
-                Thread.sleep(speed - duration);
+            int downloadData = 0;
+            long start = System.currentTimeMillis();
+            while ((bytesRead = in.read(dataBuffer, OFF, BUFFER_IN_BYTES)) != OUT_OF) {
+                fileOutputStream.write(dataBuffer, OFF, bytesRead);
+                downloadData += bytesRead;
+                if (downloadData >= speed) {
+                    long finish = System.currentTimeMillis();
+                    long period = finish - start;
+                    if (period < MILLISECONDS) {
+                        Thread.sleep(MILLISECONDS - period);
+                    }
+                    downloadData = 0;
+                    start = System.currentTimeMillis();
+                }
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -42,9 +49,8 @@ public class Wget implements Runnable {
     public static void main(String[] args) throws InterruptedException {
         Validator val = new Validator();
         val.validateArgs(args);
-        String url = args[0];
         int speed = Integer.parseInt(args[1]);
-        Thread wget = new Thread(new Wget(url, speed));
+        Thread wget = new Thread(new Wget(args[0], speed, args[2]));
         wget.start();
         wget.join();
     }
