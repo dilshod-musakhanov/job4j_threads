@@ -4,15 +4,26 @@ import java.io.*;
 
 public class ParseFile {
     private final File file;
-    private Content content;
+    private ReadContent readContent;
+    private WriteContent writeContent;
 
-    public ParseFile(File file, Content content) {
+    public ParseFile(File file) {
         this.file = file;
-        this.content = content;
     }
 
-    public String getContent() {
-        content.acceptFile(file);
-        return content.getFileContent(ch -> true);
+    public synchronized String getContent() {
+        readContent = new ReadContent(file);
+        return readContent.readContent(ch -> true);
     }
+
+    public synchronized String getContentWithoutUnicode() {
+        readContent = new ReadContent(file);
+        return readContent.readContentWithoutUnicode(ch -> ch < 0x80);
+    }
+
+    public synchronized void saveContent(String content) {
+        writeContent = new WriteContent(file);
+        writeContent.writeContent(content);
+    }
+
 }
