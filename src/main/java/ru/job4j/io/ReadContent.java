@@ -10,15 +10,15 @@ public class ReadContent {
         this.file = file;
     }
 
-    public synchronized String readContent(Predicate<Character> filter) {
-        return getFileContent(filter);
+    public synchronized String readContent() {
+        return getFileContent(ch -> true);
     }
 
-    public synchronized String readContentWithoutUnicode(Predicate<Character> filter) {
-        return getFileContent(filter);
+    public synchronized String readContentWithoutUnicode() {
+        return getFileContent(ch -> ch < 0x80);
     }
 
-    public String getFileContent(Predicate<Character> filter) {
+    private String getFileContent(Predicate<Character> filter) {
         StringBuilder stringBuilder = new StringBuilder();
         try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
             int data;
