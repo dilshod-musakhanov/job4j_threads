@@ -31,12 +31,11 @@ public class AccountStorage {
     public synchronized boolean transfer(int fromId, int toId, int amount) {
         Optional<Account> fromAccount = getById(fromId);
         Optional<Account> toAccount = getById(toId);
-        if (fromAccount.isPresent() && toAccount.isPresent() && fromAccount.get().amount() >= amount) {
-            fromAccount.get().setAmount(fromAccount.get().amount() - amount);
-            toAccount.get().setAmount(toAccount.get().amount() + amount);
-        } else {
+        if (fromAccount.isEmpty() || toAccount.isEmpty() || fromAccount.get().amount() < amount) {
             throw new IllegalArgumentException("One of the accounts are not valid or Insufficient funds to transfer");
         }
+        fromAccount.get().setAmount(fromAccount.get().amount() - amount);
+        toAccount.get().setAmount(toAccount.get().amount() + amount);
         return true;
     }
 
