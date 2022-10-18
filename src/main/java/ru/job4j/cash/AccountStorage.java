@@ -13,29 +13,15 @@ public class AccountStorage {
     private final HashMap<Integer, Account> accounts = new HashMap<>();
 
     public synchronized boolean add(Account account) {
-        boolean result = false;
-        if (getById(account.getId()).isEmpty()) {
-            accounts.put(account.getId(), account);
-        }
-        return result;
+        return accounts.putIfAbsent(account.getId(), account) == null;
     }
 
     public synchronized boolean update(Account account) {
-        boolean result = false;
-        if (getById(account.getId()).isPresent()) {
-            accounts.replace(accounts.get(account.getId()).getId(), account);
-            result = true;
-        }
-        return result;
+        return accounts.replace(account.getId(), account) != null;
     }
 
     public synchronized boolean delete(int id) {
-        boolean result = false;
-        if (getById(id).isPresent()) {
-            accounts.remove(id);
-            result = true;
-        }
-        return result;
+        return accounts.remove(id) != null;
     }
 
     public synchronized Optional<Account> getById(int id) {
@@ -43,16 +29,14 @@ public class AccountStorage {
     }
 
     public synchronized boolean transfer(int fromId, int toId, int amount) {
-        if (getById(fromId).isEmpty() && getById(toId).isEmpty()) {
-            throw new IllegalArgumentException("One of the accounts are not valid");
+        Optional<Account> fromAccount = getById(fromId);
+        Optional<Account> toAccount = getById(toId);
+        if (fromAccount.isPresent() && toAccount.isPresent() && fromAccount.get().amount() >= amount) {
+            fromAccount.get().setAmount(fromAccount.get().amount() - amount);
+            toAccount.get().setAmount(toAccount.get().amount() + amount);
+        } else {
+            throw new IllegalArgumentException("One of the accounts are not valid or Insufficient funds to transfer");
         }
-        Account fromAccount = accounts.get(fromId);
-        Account toAccount = accounts.get(toId);
-        if (fromAccount.amount() < amount) {
-            throw new IllegalArgumentException("Insufficient funds to transfer");
-        }
-        fromAccount.setAmount(fromAccount.amount() - amount);
-        toAccount.setAmount(toAccount.amount() + amount);
         return true;
     }
 
