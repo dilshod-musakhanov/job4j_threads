@@ -13,17 +13,15 @@ public class CountBarrier {
 
     public void count() {
         synchronized (monitor) {
-            while (count != total) {
-                count++;
-                monitor.notifyAll();
-            }
+            count++;
+            monitor.notifyAll();
         }
 
     }
 
     public void await() {
         synchronized (monitor) {
-            while (!(count >= total)) {
+            while (count < total) {
                 try {
                     monitor.wait();
                 } catch (InterruptedException e) {
