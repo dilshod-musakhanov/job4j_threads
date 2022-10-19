@@ -11,42 +11,37 @@ public class SimpleBlockingQueue<T> {
 
     private final int numberOfElements;
 
+    @GuardedBy("this")
+    private final Queue<T> queue = new LinkedList<>();
+
     public SimpleBlockingQueue(int numberOfElements) {
         this.numberOfElements = numberOfElements;
     }
 
-    @GuardedBy("this")
-    private Queue<T> queue = new LinkedList<>();
-
-    public void offer(T value) {
+    public void offer(T value) throws InterruptedException {
         synchronized (this) {
             while (queue.size() == numberOfElements) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                System.out.println(queue.offer(value));
+                System.out.println(Thread.currentThread().getName() + " is waiting");
+                wait();
             }
             if (queue.size() < numberOfElements) {
                 queue.offer(value);
-                this.notify();
+                System.out.println(Thread.currentThread().getName() + " offer() - " + value);
+                notifyAll();
             }
         }
     }
 
-    public T poll() {
+    public T poll() throws InterruptedException {
         synchronized (this) {
             while (null == queue.peek()) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                System.out.println(Thread.currentThread().getName() + " is waiting");
+                wait();
             }
-            this.notify();
-            return queue.poll();
-
+            T value = queue.poll();
+            System.out.println(Thread.currentThread().getName() + " poll() - " + value);
+            notifyAll();
+            return value;
         }
     }
 

@@ -9,8 +9,20 @@ public class SimpleBlockingQueueTest {
     @Test
     public void whenAdd() throws InterruptedException {
         SimpleBlockingQueue sbq = new SimpleBlockingQueue<Integer>(3);
-        Thread producer1 = new Thread(() -> sbq.offer(1));
-        Thread producer2 = new Thread(() -> sbq.offer(2));
+        Thread producer1 = new Thread(() -> {
+            try {
+                sbq.offer(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        Thread producer2 = new Thread(() -> {
+            try {
+                sbq.offer(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
         producer1.start();
         producer2.start();
         producer1.join();
@@ -22,9 +34,27 @@ public class SimpleBlockingQueueTest {
     @Test
     public void whenAddThenRemove() throws InterruptedException {
         SimpleBlockingQueue sbq = new SimpleBlockingQueue<Integer>(2);
-        Thread producer1 = new Thread(() -> sbq.offer(1));
-        Thread producer2 = new Thread(() -> sbq.offer(2));
-        Thread consumer1 = new Thread(() -> sbq.poll());
+        Thread producer1 = new Thread(() -> {
+            try {
+                sbq.offer(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        Thread producer2 = new Thread(() -> {
+            try {
+                sbq.offer(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        Thread consumer1 = new Thread(() -> {
+            try {
+                sbq.poll();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
         producer1.start();
         producer2.start();
         consumer1.start();
