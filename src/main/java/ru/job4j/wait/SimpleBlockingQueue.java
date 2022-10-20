@@ -21,25 +21,19 @@ public class SimpleBlockingQueue<T> {
     public void offer(T value) throws InterruptedException {
         synchronized (this) {
             while (queue.size() == numberOfElements) {
-                System.out.println(Thread.currentThread().getName() + " is waiting");
                 wait();
             }
-            if (queue.size() < numberOfElements) {
-                queue.offer(value);
-                System.out.println(Thread.currentThread().getName() + " offer() - " + value);
-                notifyAll();
-            }
+            queue.offer(value);
+            notifyAll();
         }
     }
 
     public T poll() throws InterruptedException {
         synchronized (this) {
-            while (null == queue.peek()) {
-                System.out.println(Thread.currentThread().getName() + " is waiting");
+            while (queue.size() == 0) {
                 wait();
             }
             T value = queue.poll();
-            System.out.println(Thread.currentThread().getName() + " poll() - " + value);
             notifyAll();
             return value;
         }
