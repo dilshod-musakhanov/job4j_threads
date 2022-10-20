@@ -12,13 +12,12 @@ import static org.junit.Assert.*;
 public class SimpleBlockingQueueTest {
 
     @Test
-    public void whenFetchAllThenGetIt() throws InterruptedException{
+    public void whenFetchAllThenGetIt() throws InterruptedException {
         final CopyOnWriteArrayList<Integer> buffer = new CopyOnWriteArrayList<>();
         final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(5);
         Thread producer = new Thread(
                 () -> {
-                    IntStream.range(0, 5).forEach(i ->
-                            {
+                    IntStream.range(0, 5).forEach(i -> {
                                 try {
                                     queue.offer(i);
                                 } catch (InterruptedException e) {
@@ -54,8 +53,7 @@ public class SimpleBlockingQueueTest {
         final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(5);
         Thread producer = new Thread(
                 () -> {
-                    IntStream.range(0, 5).forEach(i ->
-                    {
+                    IntStream.range(0, 5).forEach(i -> {
                         try {
                             queue.offer(i);
                         } catch (InterruptedException e) {
@@ -81,7 +79,7 @@ public class SimpleBlockingQueueTest {
         consumer.interrupt();
         consumer.join();
         assertThat(buffer, is(Arrays.asList(0, 1, 2)));
-        assertThat(Arrays.asList(queue.poll(),queue.poll()), is(Arrays.asList(3, 4)));
+        assertThat(Arrays.asList(queue.poll(), queue.poll()), is(Arrays.asList(3, 4)));
     }
 
 }
