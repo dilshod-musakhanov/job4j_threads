@@ -35,4 +35,16 @@ public class CacheTest {
         assertThat(cache.getBase(1)).isEqualTo(null);
     }
 
+    @Test
+    public void whenUpdateIsFailedAndThenExceptionThrown() {
+        Base model = new Base(1, 0);
+        model.setName("Petr");
+        Cache cache = new Cache();
+        cache.add(model);
+        Base modelToUpdate = new Base(1, 1);
+        modelToUpdate.setName("Stas");
+        assertThatThrownBy(() -> {
+            cache.update(modelToUpdate);
+        }).isInstanceOf(OptimisticException.class);
+    }
 }

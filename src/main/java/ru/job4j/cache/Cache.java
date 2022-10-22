@@ -12,11 +12,11 @@ public class Cache {
     }
 
     public boolean update(Base model) {
-        BiFunction<Integer, Base, Base> func = (integer, storedModel) -> {
-            if (storedModel.getVersion() != model.getVersion()) {
+        BiFunction<Integer, Base, Base> func = (key, value) -> {
+            if (value.getVersion() != model.getVersion()) {
                 throw new OptimisticException("Versions are not equal");
             }
-            Base temp = new Base(integer, storedModel.getVersion() + 1);
+            Base temp = new Base(key, value.getVersion() + 1);
             temp.setName(model.getName());
             return temp;
         };
