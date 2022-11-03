@@ -22,7 +22,7 @@ public class ParallelIndexSearch<T> extends RecursiveTask<Integer> {
 
     private int findIndex() {
         int res = INDEX_NOT_FOUND;
-        for (int i = from; i < to; i++) {
+        for (int i = from; i <= to; i++) {
             if (Objects.equals(array[i], object)) {
                 res = i;
                 break;
@@ -43,13 +43,7 @@ public class ParallelIndexSearch<T> extends RecursiveTask<Integer> {
         rightSearch.fork();
         int leftResult = leftSearch.join();
         int rightResult = rightSearch.join();
-        if (leftResult != INDEX_NOT_FOUND) {
-            return leftResult;
-        }
-        if (rightResult != INDEX_NOT_FOUND) {
-            return rightResult;
-        }
-        return INDEX_NOT_FOUND;
+        return Math.max(leftResult, rightResult);
     }
 
     public static <T> Integer find(T[] array, T object) {

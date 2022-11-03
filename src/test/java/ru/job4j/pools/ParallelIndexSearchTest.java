@@ -25,6 +25,24 @@ public class ParallelIndexSearchTest {
     }
 
     @Test
+    void whenIndexFoundForLastElementInTenElementArrayInteger() {
+        Integer[] array = new Integer[] {
+                10, 9, 8, 7, 6, 5, 4, 3, 2, 1
+        };
+        int res = 9;
+        assertThat(ParallelIndexSearch.find(array, 1)).isEqualTo(res);
+    }
+
+    @Test
+    void whenIndexFoundForLastElementInEighteenElementArrayInteger() {
+        Integer[] array = new Integer[] {
+                10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 19, 18, 17, 16, 15, 14, 13, 12, 11
+        };
+        int res = 18;
+        assertThat(ParallelIndexSearch.find(array, 11)).isEqualTo(res);
+    }
+
+    @Test
     void whenIndexNotFoundInTenElementArrayString() {
         String[] array = new String[] {
                 "10", "9", "8", "7", "6", "5", "4", "3", "2", "1"
