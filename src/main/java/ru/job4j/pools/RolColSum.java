@@ -24,12 +24,12 @@ public class RolColSum {
     }
 
     public static Sums getSums(int index, int[][] matrix) {
-        int rowEl = 0;
-        int colEl = 0;
+        int row = 0;
+        int column = 0;
         for (int j = 0; j < matrix.length; j++) {
-            rowEl += matrix[index][j];
-            colEl += matrix[j][index];
+            row += matrix[index][j];
+            column += matrix[j][index];
         }
-        return new Sums(rowEl, colEl);
+        return new Sums(row, column);
     }
 }
