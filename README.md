@@ -14,3 +14,7 @@
 
 save changes on stash branch by stashing and now jump to hotfix branch to make some change
 then we will retrieve stashed file in stash branch 
+
+В курсе производилась работа с ветками git
+
+task_124176
